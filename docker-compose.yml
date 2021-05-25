@@ -1,0 +1,65 @@
+version: "3"
+services:
+  client:
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    volumes:
+      - ./client/:/app
+      - /app/node_modules
+    networks:
+      - backend
+
+  server:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    command: gunicorn --bind 0.0.0.0:5000 app:app
+    volumes:
+      - ./server/:/app
+      - appdata:/var/www/
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_USERNAME: "apiuser"
+      MONGODB_PASSWORD: "apipassword"
+    networks:
+      - backend  
+    depends_on:
+      - mongodb
+    ports:
+      - "5000:5000"   
+
+  mongodb:
+    image: mongo
+    container_name: mongo
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
+      MONGO_INITDB_DATABASE: webapp
+      MONGODB_DATA_DIR: /data/db
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - backend
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "3000:80"
+    networks:
+      - backend
+
+networks: 
+  backend:
+    driver: bridge
+
+volumes:
+  mongodbdata:
+    driver: local
+  appdata:
+    driver: local
