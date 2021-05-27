@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>funtion test page</title>
+</head>
+<body>
+    <h1>Funtion test page</h1>
+    <hr/>
+    <h2>user_request</h2>
+    <form action = "/api/request" method="POST">
+        <input type ="text" name="key" placeholder = "요청번호">
+        <br>
+        <input type = "file" name="file">
+        <input type ="hidden" name = "ip"/>
+        <input type ="hidden" name = "mode" value="add">
+        <input type = "submit" value="add(post)"/>
+    </form>
+    <hr/>
+    <form action = "/api/request" method="GET">
+        <!--
+            <input type ="text" name="key" placeholder = "유저고유값">
+        -->
+        <input type ="text" name="query" placeholder="query"> <a>ex) {'field':'value', ... }</a>
+        <input type = "submit" value="get(get)"/>
+    </form>
+    <hr/>
+    <form action="/api/request" method="POST">
+        <input type= "text" name ="key" placeholder = "요청번호">
+        <input type="hidden" name="mode" value = "delete">
+        <input type="submit" value="del(post)">
+    </form>
+
+
+    <h2>result_from_model</h2>
+    <form action = "/api/result" method="POST">
+        <input type ="text" name="key" placeholder = "요청번호">
+        <br>
+        <input type = "file" name="file">
+        <input type ="hidden" name = "ip"/>
+        <input type ="hidden" name = "mode" value="add">
+        <input type = "submit" value="add(post)"/>
+    </form>
+    <hr/>
+    <form action = "/api/result" method="GET">
+        <!--
+            <input type ="text" name="key" placeholder = "유저고유값">
+        -->
+        <input type ="text" name="query" placeholder="query"> <a>ex) {'field':'value', ... }</a>
+        <input type = "submit" value="get(get)"/>
+    </form>
+    <hr/>
+    <form action="/api/result" method="POST">
+        <input type= "text" name ="key" placeholder = "요청번호">
+        <input type="hidden" name="mode" value = "delete">
+        <input type="submit" value="del(post)">
+    </form>
+</body>
+</html>
