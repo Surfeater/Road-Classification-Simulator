@@ -1,26 +1,31 @@
 import pymongo
 
 class MongoDbManager :
-    client = pymongo.MongoClient(host='localhost', port=27017)
-    db = client['webapp']
+    hostname = None
+    client = None
+    db = None
     cursor = None
+    
+    def __init__(self, _hostname, _db , _col_name) :
+        self.hostname = _hostname
+        self.client =  pymongo.MongoClient(host= self.hostname, port=27017)
+        if self.check_connection() :
+            self.db = self.client[_db]
+            self.cursor = self.db[_col_name]
+            print("[DBmanager] init : ["+_db+"]["+_col_name+"]")
 
-    def __init__(self, col_name) :
-        self.cursor = self.db[col_name]
-        self.check_connection()
-        print("[DBmanager] init : [webapp]["+col_name+"]")
-        
+            
     def check_connection (self) :
         count = 0 
         while count < 3 : #최대 3회까지 재연결 시도
             try:
-                self.client.admin.command('ismaster')
-                print("[DBmanager] connected ")
+                print()
+                self.client.server_info()
                 return True
             except:
                 count+=1
                 print("[DBmanager] connect fail retry... {}".format(count))
-                self.client = pymongo.MongoClient(host='localhost', port=27017)
+                #self.client = pymongo.MongoClient(host= self.hostname, port=27017)
         print("[DBmanager] failed connection")
         return False
 
@@ -29,20 +34,26 @@ class MongoDbManager :
             print("[DBmanager] add data :",end='')
             print(_data)
             if type(_data) is list:
-                return self.cursor.insert_many(_data)
+                reuslt = self.cursor.insert_many(_data)
             else :
-                return self.cursor.insert_one(_data)
+                result = self.cursor.insert_one(_data)
+            self.client.close()
+            return result    
         else :
             print("[DBmanager] failed to add data")
+            self.client.close()
             return False
     
     def get_data ( self, _query):
         if self.check_connection() :
             print("[DBmanager] get data by :",end='')
             print(_query)
-            return self.cursor.find(_query)
+            result = self.cursor.find(_query)
+            self.client.close()
+            return result
         else :
             print("[DBmanager] failed to get data")
+            self.client.close()
             return False
 
     def del_data ( self, _query):
@@ -56,13 +67,16 @@ class MongoDbManager :
                 print("[DBmanager] above delete target data exist")
             else : 
                 print("[DBmanager] data delete fail : no such data")
+                self.client.close()
                 return False
             self.cursor.delete_many(_query)
             if self.get_data(_query).count() == 0:
                 print("[DBmanager] data deleted")
+                self.client.close()
                 return True
             else : 
                 print("[DBmanager] data delete fail : data still exist")
+                self.client.close()
                 return False
         else :
             return False

@@ -8,6 +8,16 @@ import os
 import ast
 
 app = Flask(__name__)
+app.config['MONGODB_SETTINGS'] = {
+    'host': os.environ['DB_HOST'],
+    'db': os.environ['DB']
+}
+
+print(app.config['MONGODB_SETTINGS']['host'])
+print(type(app.config['MONGODB_SETTINGS']['host']))
+print(app.config['MONGODB_SETTINGS']['db'])
+print(type(app.config['MONGODB_SETTINGS']['db']))
+
 CORS(app)
 #app.secret_key = 'test_secret'
 DEBUG = True
@@ -20,9 +30,12 @@ def convertCursorToJson(_cursor) :
 def getNowTimeStr() :
     return (datetime.now()).strftime("%d/%m/%Y %H:%M:%S")
 
-
-@app.route('/dodotest')
+@app.route('/')
 def init_page():
+    return redirect(url_for('render_test_page'))
+
+@app.route('/back-test')
+def render_test_page():
     return render_template('test_back_page.html')
 
 """
@@ -30,13 +43,16 @@ Request data
 """
 @app.route('/api/request', methods=['POST','GET'])
 def serve_request_data():
-    dbManager = dbmanager.MongoDbManager('user_requests')
+    dbManager = dbmanager.MongoDbManager(app.config['MONGODB_SETTINGS']['host'],
+                                        app.config['MONGODB_SETTINGS']['db'],
+                                        'user_requests')
     if request.method == 'POST':
         mode_received = request.form['mode']
         ### ADD data ###
         if mode_received == "add": 
             id_received = request.form['key']
             ipaddr_received = request.remote_addr
+            #ipaddr_received = request.form['ip']
             now_time = getNowTimeStr()
             #f = request.files['file']
             result = dbManager.add_data({
@@ -78,7 +94,9 @@ Result data
 """
 @app.route('/api/result', methods=['POST','GET'])
 def serve_result_data():
-    dbManager = dbmanager.MongoDbManager('analyze_result')
+    dbManager = dbmanager.MongoDbManager(app.config['MONGODB_SETTINGS']['host'],
+                                        app.config['MONGODB_SETTINGS']['db'],
+                                        'analyze_result')
     if request.method == 'POST':
         mode_received = request.form['mode']
         ### ADD data ###
@@ -89,7 +107,7 @@ def serve_result_data():
             result = dbManager.add_data({
                             KEY : id_received , 
                             'time' : now_time,
-                            'resultdata': 'testtesttest'
+                            'resultdata': 'dummyResultData'
                             #'file' : f.filename
                             })
             if result != False :
