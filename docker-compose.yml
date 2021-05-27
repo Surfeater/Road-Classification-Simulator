@@ -4,6 +4,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./client
+    container_name: client
     volumes:
       - ./client/:/app
       - /app/node_modules
@@ -14,6 +15,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
+    container_name: server
     command: gunicorn --bind 0.0.0.0:3050 app:app
     volumes:
       - ./server/:/app
@@ -26,7 +28,7 @@ services:
     depends_on:
       - mongo
     ports:
-      - "3050:3050"   
+      - "5000:3050"   
 
   mongo:
     container_name: mongo
@@ -43,6 +45,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./nginx
+    container_name: nginx
     ports:
       - "8000:80"
     networks:
