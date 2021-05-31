@@ -138,39 +138,5 @@ def serve_result_data():
         data = dbManager.get_data(query)
         return convertCursorToJson(data)
 
-
-# @app.route('/test_back_page/fileUpload', methods = ['GET','POST'])
-# def upload_file():
-#     if request.method == 'POST':
-#         try:
-#             client = MongoClient(host='localhost', port=27017)
-#             db = client['mytest']['myCol']  
-#             print("mongo connected:")
-#             print(db)
-#             ip_address = request.remote_addr
-#             now = datetime.now()
-#             now_time = now.strftime("%d/%m/%Y %H:%M:%S")
-            
-#             f = request.files['file']
-#             if (f.filename).endswith('.csv') :
-#                 print ("this is csv")
-#             else : print("check out input file format")
-
-#             sFilename = secure_filename(f.filename)
-#             f.save("./uploads/"+sFilename)
-            
-#             submit_info = {'session_ip': ip_address, 
-#                            'access_time':now_time,
-#                            'file_name': sFilename
-#                         }
-#             print(submit_info)
-#             x = db.insert_one(submit_info)
-#             #flash("파일 업로드 완료")
-#         except :
-#             print("mongo connection fail")
-#         finally: 
-#             client.close()
-#     return redirect(url_for('render_page'))
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3050, debug=True)
