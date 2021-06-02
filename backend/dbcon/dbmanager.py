@@ -19,7 +19,6 @@ class MongoDbManager :
         count = 0 
         while count < 3 : #최대 3회까지 재연결 시도
             try:
-                print()
                 self.client.server_info()
                 return True
             except:
@@ -29,6 +28,14 @@ class MongoDbManager :
         print("[DBmanager] failed connection")
         return False
 
+    def get_last_element_by (self, _field) :
+        try : 
+            self.cursor.find()
+            last_element= self.cursor.find_one(sort=[(_field, -1)])
+            return last_element
+        except :
+            return None
+        
     def add_data ( self, _data):
         if self.check_connection() :
             print("[DBmanager] add data :",end='')
@@ -37,11 +44,11 @@ class MongoDbManager :
                 reuslt = self.cursor.insert_many(_data)
             else :
                 result = self.cursor.insert_one(_data)
-            self.client.close()
+            #self.client.close()
             return result    
         else :
             print("[DBmanager] failed to add data")
-            self.client.close()
+            #self.client.close()
             return False
     
     def get_data ( self, _query):
@@ -49,11 +56,11 @@ class MongoDbManager :
             print("[DBmanager] get data by :",end='')
             print(_query)
             result = self.cursor.find(_query)
-            self.client.close()
+            #self.client.close()
             return result
         else :
             print("[DBmanager] failed to get data")
-            self.client.close()
+            #self.client.close()
             return False
 
     def del_data ( self, _query):
@@ -67,16 +74,16 @@ class MongoDbManager :
                 print("[DBmanager] above delete target data exist")
             else : 
                 print("[DBmanager] data delete fail : no such data")
-                self.client.close()
+                #self.client.close()
                 return False
             self.cursor.delete_many(_query)
             if self.get_data(_query).count() == 0:
                 print("[DBmanager] data deleted")
-                self.client.close()
+                #self.client.close()
                 return True
             else : 
                 print("[DBmanager] data delete fail : data still exist")
-                self.client.close()
+                #self.client.close()
                 return False
         else :
             return False
