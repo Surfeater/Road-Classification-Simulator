@@ -16,6 +16,9 @@ class MongoDbManager :
     
     def set_cursor(self, _col) :
         self.cursor = self.db[_col]
+        print("[DBmanager] cursor on ["+_col+"]")
+        
+        
 
     def check_connection (self) :
         count = 0 
