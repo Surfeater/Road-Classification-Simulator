@@ -5,16 +5,18 @@ class MongoDbManager :
     client = None
     db = None
     cursor = None
-    
-    def __init__(self, _hostname, _db , _col_name) :
+
+    def __init__(self, _hostname, _db, _col_name) : 
         self.hostname = _hostname
         self.client =  pymongo.MongoClient(host= self.hostname, port=27017)
         if self.check_connection() :
             self.db = self.client[_db]
             self.cursor = self.db[_col_name]
             print("[DBmanager] init : ["+_db+"]["+_col_name+"]")
+    
+    def set_cursor(self, _col) :
+        self.cursor = self.db[_col]
 
-            
     def check_connection (self) :
         count = 0 
         while count < 3 : #최대 3회까지 재연결 시도
@@ -28,13 +30,6 @@ class MongoDbManager :
         print("[DBmanager] failed connection")
         return False
 
-    def get_last_element_by (self, _field) :
-        try : 
-            self.cursor.find()
-            last_element= self.cursor.find_one(sort=[(_field, -1)])
-            return last_element
-        except :
-            return None
         
     def add_data ( self, _data):
         if self.check_connection() :
@@ -88,4 +83,10 @@ class MongoDbManager :
         else :
             return False
         
-    
+    def get_last_element_by (self, _field) :
+        try : 
+            self.cursor.find()
+            last_element= self.cursor.find_one(sort=[(_field, -1)])
+            return last_element
+        except :
+            return None
