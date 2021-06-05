@@ -1,4 +1,4 @@
-# Surface-Detect-Simulator
+# Road Classification Simulator
 <p align="center">
   <img src="https://img.shields.io/badge/Node.js-14.17.0-blue" />
   <img src="https://img.shields.io/badge/Python-3.9.5-blue" />
