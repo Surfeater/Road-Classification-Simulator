@@ -17,8 +17,6 @@ class MongoDbManager :
     def set_cursor(self, _col) :
         self.cursor = self.db[_col]
         print("[DBmanager] cursor on ["+_col+"]")
-        
-        
 
     def check_connection (self) :
         count = 0 
@@ -32,7 +30,6 @@ class MongoDbManager :
                 #self.client = pymongo.MongoClient(host= self.hostname, port=27017)
         print("[DBmanager] failed connection")
         return False
-
         
     def add_data ( self, _data):
         if self.check_connection() :
@@ -93,3 +90,7 @@ class MongoDbManager :
             return last_element
         except :
             return None
+
+    def count_data_by(self, _query):
+        count = self.cursor.count_documents(_query)
+        return count
