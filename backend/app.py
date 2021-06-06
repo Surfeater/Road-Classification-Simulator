@@ -13,16 +13,17 @@ from dbcon import dbmanager # pymongo db module
 
 DEBUG = True
 app = Flask(__name__)
-api = Api(app, version='3.0', title='Surface-Detect-Simulator API', 
-        description='API for user_request data')
+api = Api(app, version='3.0', title='Road Classification Simulator API', 
+        description='API for analysis request & analysis result')
 
 ns_rq = api.namespace('requests', description = 'analysis request data operations')
 ns_rs = api.namespace('results', description = 'analysis result data operations')
 
 app.config['MONGODB_SETTINGS'] = { 'host': os.environ['DB_HOST'],
                                     'db': os.environ['DB']} 
+collections = ['analysis_request','analysis_result']
 DAO = dbmanager.MongoDbManager( app.config['MONGODB_SETTINGS']['host'], 
-                                app.config['MONGODB_SETTINGS']['db'],'user_requests')
+                                app.config['MONGODB_SETTINGS']['db'], collections[0])
 KEY = 'request_number'  
 
 analysis_request = ns_rq.model('Analysis request',{
@@ -51,7 +52,7 @@ class AnalysisRequestList (Resource) :
     @ns_rq.marshal_list_with(analysis_request)
     def get (self) :
         '''List all requests'''
-        DAO.set_cursor('user_requests')
+        DAO.set_cursor(collections[0])
         result = list()
         for x in DAO.get_data({}) :
             result.append(x)
@@ -62,7 +63,7 @@ class AnalysisRequestList (Resource) :
     @ns_rq.marshal_list_with(analysis_request, code=201)
     def post(self):
         '''create new request'''
-        DAO.set_cursor('user_requests')
+        DAO.set_cursor(collections[0])
         received_data = api.payload
         ipaddr_received =  request.remote_addr #received_data['ip'] #ipaddr_received = request.form['ip']
         now_time = getNowTimeStr() #received_data['time']     
@@ -100,7 +101,7 @@ class AnalysisRequest(Resource):
     @ns_rq.marshal_with(analysis_request)
     def get(self, request_number):
         '''Get a request by request_number'''
-        DAO.set_cursor('user_requests')
+        DAO.set_cursor(collections[0])
         query = {KEY : request_number}
         result = DAO.get_data(query)
         return loads(dumps(result))
@@ -109,7 +110,7 @@ class AnalysisRequest(Resource):
     @ns_rq.response(204, 'analysis_request deleted')
     def delete(self, request_number):
         '''Delete a request by request_number'''
-        DAO.set_cursor('user_requests')
+        DAO.set_cursor(collections[0])
         query = {KEY : request_number}
         DAO.del_data(query)
         return '', 204
@@ -122,24 +123,28 @@ class AnalysisResultList (Resource) :
     @ns_rs.marshal_list_with(analysis_result)
     def get (self) :
         '''List all results'''
-        DAO.set_cursor('analysis_result')
+        DAO.set_cursor(collections[1])
         result = list()
         for x in DAO.get_data({}) :
             result.append(x)
         return result
     
     @ns_rs.doc('create_analysis_result')
+    @ns_rs.response(403, 'NOT allowed create result_data for not existing request_number')
     @ns_rs.expect(analysis_result)
     @ns_rs.marshal_list_with(analysis_result, code=201)
     def post(self):
-        '''create new request'''
-        DAO.set_cursor('analysis_result')
+        '''create new result data (caution : request number must exist in analysis request)'''
         received_data = api.payload
         received_request_number = received_data['request_number']
-        now_time = getNowTimeStr() #received_data['time']     
+        now_time = getNowTimeStr() #received_data['time']
         input_filepath = received_data['input_filepath'] 
         result_filepath = received_data['result_filepath']
         
+        DAO.set_cursor(collections[0])
+        if DAO.count_data_by({KEY : received_request_number}) == 0 :
+            return '', 403
+
         formed_data =  {
                         'request_number' : received_request_number,
                         'time' : now_time,
@@ -147,6 +152,7 @@ class AnalysisResultList (Resource) :
                         'result_filepath' : result_filepath
                     }
         
+        DAO.set_cursor(collections[1])
         DAO.add_data(formed_data)
         result = DAO.get_data({KEY : received_request_number})
         return loads(dumps(result)), 201
@@ -161,7 +167,7 @@ class AnalysisResult(Resource):
     @ns_rs.marshal_with(analysis_result)
     def get(self, request_number):
         '''Get a analysis_result by request_number'''
-        DAO.set_cursor('analysis_result')
+        DAO.set_cursor(collections[1])
         query = {KEY : request_number}
         result = DAO.get_data(query)
         return loads(dumps(result))
@@ -170,7 +176,7 @@ class AnalysisResult(Resource):
     @ns_rs.response(204, 'analysis_result deleted')
     def delete(self, request_number):
         '''Delete a analysis_result by request_number'''
-        DAO.set_cursor('analysis_result')
+        DAO.set_cursor(collections[1])
         query = {KEY : request_number}
         DAO.del_data(query)
         return '', 204
