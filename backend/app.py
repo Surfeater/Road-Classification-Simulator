@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from flask import Flask, jsonify, request, render_template
 from flask_restplus import Api,Resource, fields
 
