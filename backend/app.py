@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from flask import Flask, jsonify, request, render_template
 from flask_restplus import Api,Resource, fields
 
@@ -67,15 +65,9 @@ class AnalysisRequestList (Resource) :
         '''create new request'''
         DAO.set_cursor(collections[0])
         received_data = api.payload
-        ipaddr_received =  request.remote_addr #received_data['ip'] #ipaddr_received = request.form['ip']
-        now_time = getNowTimeStr() #received_data['time']     
-        filepath = received_data['filepath'] #f = request.files['file']
-        # sFilename = secure_filename(f.filename)
-        # f.save("./uploads/"+sFilename)
-
-        # if (f.filename).endswith('.csv') :
-        #         print ("[back] user-input file check : it's csv file")
-        # else : print("[back] user-input file check : not csv file")
+        ipaddr_received =  request.remote_addr 
+        now_time = getNowTimeStr()      
+        filepath = received_data['filepath'] 
 
         generated_req_num = 0
         last_key_element = DAO.get_last_element_by(KEY) # 키 필드의 마지막 값을 불러온다.
