@@ -14,6 +14,7 @@ function DataInputPage({ location, history }) {
 
   const confirmModal = () => {
     setModalOpen(false);
+    history.push('/analysis');
   }
 
   const cancelModal = () => {
