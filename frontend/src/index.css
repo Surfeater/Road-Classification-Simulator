@@ -61,6 +61,18 @@ ul {
   bottom: 4vh;
   left: 40vw;
   right: 40vw;
+}
+
+.main ul li4 { 
+  position: fixed;
+  bottom: 50vh;
+  left: 20vw;
+}
+
+.main ul li5 { 
+  position: fixed;
+  bottom: 50vh;
+  left: 60vw;
 } 
 
 .datainput,
@@ -71,6 +83,15 @@ ul {
 }
 
 .btn {
+  color: black;
+  background: white;
+  padding: 2vmin 2vmax;
+  border: 2px solid black;
+  border-radius: 1.5rem;
+  font-size: 2vmax;
+}
+
+.btn2 {
   color: black;
   background: white;
   padding: 2vmin 2vmax;
