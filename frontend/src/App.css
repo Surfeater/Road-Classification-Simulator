@@ -36,3 +36,5 @@
     transform: rotate(360deg);
   }
 }
+
+@import '../node_modules/react-beautiful-horizontal-timeline/card.css';
