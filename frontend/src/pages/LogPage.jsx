@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMemo } from "react";
-import faker from "faker/locale/ko";
+import faker from "faker";
 import Table from "./Table";
 
 faker.seed(100);
@@ -8,40 +8,42 @@ faker.seed(100);
 function LogPage({ location, history }) {
   console.log(history); 
   console.log(location); 
+
   const columns = useMemo(
     () => [
       {
-        accessor: "name",
-        Header: "Name",
+        accessor: "index",
+        Header: "Index",
       },
       {
-        accessor: "email",
-        Header: "Email",
+        accessor: "ip",
+        Header: "IP",
       },
       {
-        accessor: "phone",
-        Header: "Phone",
+        accessor: "time",
+        Header: "Time",
       },
     ],
     []
   );
 
-  const data = useMemo(
+  let no = 0;
+  const aab = useMemo(
     () =>
-      Array(530)
+      Array(20)
         .fill()
         .map(() => ({
-          name: faker.name.lastName() + faker.name.firstName(),
-          email: faker.internet.email(),
-          phone: faker.phone.phoneNumber(),
+          ip: faker.internet.ip(),
+          time: Date(),
+          index: <button calssName ="btn" onClick={() => history.push('/analysis/')} >{no++}</button>,
         })),
     []
   );
   return ( 
-    <main className='main'> 
+    <main className='main'>
       <span class="inline-block">
         <strong>로그 페이지</strong> 
-        <Table columns={columns} data={data} />
+        <Table columns={columns} data={aab} />
         <ul>
           <li2> 
             <button className="btn" onClick={() => history.push('/')}>메인화면</button> 
