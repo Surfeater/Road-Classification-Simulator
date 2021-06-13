@@ -1,13 +1,27 @@
 import React from 'react';
-import { useMemo } from "react";
-import faker from "faker";
+import { useMemo, useEffect, useState, useRef } from "react";
 import Table from "./Table";
-
-faker.seed(100);
+import axios from "axios";
 
 function LogPage({ location, history }) {
   console.log(history); 
   console.log(location); 
+
+  let indexNum = useRef(-1);
+  const [data, setData] = useState([]);
+  
+  useEffect(() =>{
+		async function fetchData(){
+		const result = await axios.get('http://localhost:5000/results/');
+    const newResult = result.data.map((item) => {
+      const index = <button calssName ="btn" onClick={() => history.push('/analysis/')} >{indexNum.current += 1}</button>;
+      const updateItem = {...item, index};
+      return updateItem;
+    });
+    setData(newResult);
+		}
+		fetchData();
+	},[]);
 
   const columns = useMemo(
     () => [
@@ -16,34 +30,30 @@ function LogPage({ location, history }) {
         Header: "Index",
       },
       {
-        accessor: "ip",
-        Header: "IP",
+        accessor: "request_number",
+        Header: "Request_Number",
       },
       {
         accessor: "time",
         Header: "Time",
       },
+      {
+        accessor: "input_filepath",
+        Header: "Input_Filepath",
+      },
+      {
+        accessor: "result_filepath",
+        Header: "Result_Filepath",
+      },
     ],
     []
   );
-
-  let no = 0;
-  const aab = useMemo(
-    () =>
-      Array(20)
-        .fill()
-        .map(() => ({
-          ip: faker.internet.ip(),
-          time: Date(),
-          index: <button calssName ="btn" onClick={() => history.push('/analysis/')} >{no++}</button>,
-        })),
-    []
-  );
+  console.log(data);
   return ( 
     <main className='main'>
       <span class="inline-block">
         <strong>로그 페이지</strong> 
-        <Table columns={columns} data={aab} />
+        <Table columns={columns} data={data} />
         <ul>
           <li2> 
             <button className="btn" onClick={() => history.push('/')}>메인화면</button> 

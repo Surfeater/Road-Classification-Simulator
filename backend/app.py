@@ -4,6 +4,7 @@ from flask_restplus import Api,Resource, fields
 from datetime import datetime 
 from bson.json_util import dumps, loads # convertCursorToJson
 from werkzeug.utils import secure_filename # serve_request_data - data add 
+from flask_cors import CORS
 import pprint
 import os
 import ast
@@ -13,6 +14,7 @@ from dbcon import dbmanager # pymongo db module
 
 DEBUG = True
 app = Flask(__name__)
+CORS(app)
 api = Api(app, version='3.0', title='Road Classification Simulator API', 
         description='API for analysis request & analysis result')
 
