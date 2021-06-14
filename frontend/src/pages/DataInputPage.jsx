@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import Modal from '../commons/components/Modals/Modal';
 import {useDropzone} from 'react-dropzone';
+import axios from "axios";
+
+let uploadFilepath = "";
 
 function DataInputPage({ location, history }) {
   console.log(history); 
@@ -14,6 +17,8 @@ function DataInputPage({ location, history }) {
 
   const confirmModal = () => {
     setModalOpen(false);
+    console.log(uploadFilepath);
+    axios.post('http://localhost:5000/requests/', {filepath: uploadFilepath});
     history.push('/analysis');
   }
 
@@ -93,7 +98,7 @@ function Dropzone(props) {
     isDragAccept
   ]);
 
-  const files = acceptedFiles.map(file => (
+  const files = acceptedFiles.map(file => ((uploadFilepath = file.path),
     <li key={file.path}>
       {file.path} - {file.size} bytes
     </li>
