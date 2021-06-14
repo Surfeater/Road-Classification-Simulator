@@ -7,15 +7,17 @@ function LogPage({ location, history }) {
   console.log(history); 
   console.log(location); 
 
-  let indexNum = useRef(-1);
+  /*let indexNum = useRef(-1);*/
   const [data, setData] = useState([]);
   
   useEffect(() =>{
 		async function fetchData(){
-		const result = await axios.get('http://localhost:5000/results/');
+		const result = await axios.get('http://localhost:5000/requests/');
     const newResult = result.data.map((item) => {
-      const index = <button calssName ="btn" onClick={() => history.push('/analysis/')} >{indexNum.current += 1}</button>;
-      const updateItem = {...item, index};
+      /*const index = <button calssName ="btn" onClick={() => history.push('/analysis/')} >{indexNum.current += 1}</button>;*/
+      item.request_number = <button calssName ="btn" onClick={() => history.push('/analysis/')} >{item.request_number}</button>;
+      /*const updateItem = {...item, index};*/
+      const updateItem = item;
       return updateItem;
     });
     setData(newResult);
@@ -26,24 +28,20 @@ function LogPage({ location, history }) {
   const columns = useMemo(
     () => [
       {
-        accessor: "index",
-        Header: "Index",
-      },
-      {
         accessor: "request_number",
         Header: "Request_Number",
+      },
+      {
+        accessor: "ip",
+        Header: "IP",
       },
       {
         accessor: "time",
         Header: "Time",
       },
       {
-        accessor: "input_filepath",
-        Header: "Input_Filepath",
-      },
-      {
-        accessor: "result_filepath",
-        Header: "Result_Filepath",
+        accessor: "filepath",
+        Header: "Filepath",
       },
     ],
     []
