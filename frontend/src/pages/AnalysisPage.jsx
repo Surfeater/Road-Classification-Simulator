@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../App.css';
-import { Timeline } from "react-beautiful-horizontal-timeline";
 
 function DataInputPage({ location, history }) {
   console.log(history); 
@@ -8,9 +7,13 @@ function DataInputPage({ location, history }) {
   return ( 
     <main className='main'> 
       <span class="inline-block">
-        <strong>분석 결과 화면</strong> 
-        <MyTimeline />
+        <strong>분석 결과 화면</strong>
         <ul>
+          <br/>
+          <VideoDetail />
+          <li6>
+          <AnalysisMessage />
+          </li6>
           <li2> 
             <button className="btn" onClick={() => history.push('/')}>메인화면</button> 
           </li2> 
@@ -18,47 +21,38 @@ function DataInputPage({ location, history }) {
       </span>
     </main> 
   ); 
-} 
+}
 
-function MyTimeline() {
+function VideoDetail() {
+  return (
+    <video width="60%" controls autoplay muted>
+      <source src="" type="video/mp4" />
+    </video>
+  )
+}
 
-  const myList = [
-    {
-      date: "00:00",
-      name: "아스팔트길"
-    },
-    {
-      date: "00:01",
-      name: "흙길"
-    },
-    {
-      date: "00:02",
-      name: "자갈길"
-    }
-  ];
-
-  const [labelWidth, setlabelWidth] = useState(300);
-  const [amountMove, setamountMove] = useState(800);
-  const [lineColor, setlineColor] = useState("#61dafb");
-  const [darkMode, setdarkMode] = useState(false);
-  const [eventTextAlignCenter, seteventTextAlignCenter] = useState(true);
-  const [showSlider, setshowSlider] = useState(true);
-  const [arrowsSize, setarrowsSize] = useState(false);
+function AnalysisMessage() {
+  let randNum1 = Math.floor(Math.random() * 4)
+  let randNum2 = Math.floor(Math.random() * 4)
+  let roadType = {0:"아스팔트", 1:"시멘트", 2:"자갈", 3:"흙"}
+  let text_color = ""
+  if (randNum1 == randNum2){
+    text_color = "#90EE90"
+  }else{
+    text_color = "#CD001A"
+  }
 
   return (
-    <div className="App">
-      <Timeline
-        myList={myList}
-        labelWidth={labelWidth}
-        amountMove={amountMove}
-        lineColor={lineColor}
-        darkMode={darkMode}
-        eventTextAlignCenter={eventTextAlignCenter}
-        showSlider={showSlider}
-        arrowsSize={arrowsSize}
-      />
+    <div>
+      <b>
+      실제 도로 유형: <span style={{ color: "#90EE90" }}>{roadType[randNum1]}</span>
+      <br/>
+      <br/>
+      예측 도로 유형: <span style={{ color: text_color}}>{roadType[randNum2]}</span>
+      <br/>
+      </b>
     </div>
-  );
+  )
 }
 
 export default DataInputPage;

@@ -38,7 +38,7 @@ ul {
 
 .main strong { 
   font-size: 10vmin;
-} 
+}
 
 .main ul { 
   padding:0;
@@ -73,7 +73,13 @@ ul {
   position: fixed;
   bottom: 50vh;
   left: 60vw;
-} 
+}
+
+.main ul li6 { 
+  position: fixed;
+  top: 25%;
+  left: 65%;
+}
 
 .datainput,
 .log,
